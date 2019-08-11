@@ -1,5 +1,7 @@
 {
   "name": "infoApp",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
