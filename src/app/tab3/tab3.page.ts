@@ -26,22 +26,21 @@ export class Tab3Page {
         private platform: Platform,
         private loadingController: LoadingController
     ) {
-        // firebase.initializeApp(environment.firebase);
     }
 
     public getSomeText(path: string) {
-        this.presentLoading();
-
-        this.curMime = this.mime.getMIMEtype(path.split('.').pop());
-
-        firebase.storage().ref().child(path).getDownloadURL()
-            .then(response => {
-                this.openDocument(response);
-            })
-            .catch(error => {
-                console.log('error', error);
-                this.dismissLoading();
-            });
+        // this.presentLoading();
+        //
+        // this.curMime = this.mime.getMIMEtype(path.split('.').pop());
+        //
+        // firebase.storage().ref().child(path).getDownloadURL()
+        //     .then(response => {
+        //         this.openDocument(response);
+        //     })
+        //     .catch(error => {
+        //         console.log('error', error);
+        //         this.dismissLoading();
+        //     });
     }
 
     async presentLoading() {
@@ -56,6 +55,8 @@ export class Tab3Page {
     private openDocument(doc: string): void {
         const transfer = this.fileTransfer.create();
         let path = null;
+
+        this.presentLoading();
 
         if (this.platform.is('ios')) {
             path = this.file.documentsDirectory;

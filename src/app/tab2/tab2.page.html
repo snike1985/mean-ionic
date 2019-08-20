@@ -1,16 +1,20 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>
-      Остатки
-    </ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-title>
+            Остатки
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-card *ngFor="let item of contacts">
-    <ion-card-header>
-      <ion-card-subtitle>{{ item.name }}</ion-card-subtitle>
-      <ion-card-title>{{item.email}}</ion-card-title>
-    </ion-card-header>
-  </ion-card>
+    <ion-card *ngFor="let market of markets">
+        <ion-card-header>
+            <ion-card-title>{{ market.name }}</ion-card-title>
+            <br>
+            <ion-card-subtitle>Поступления: {{ market.incomes | number }}</ion-card-subtitle>
+            <ion-card-subtitle>Возвраты: {{ market.leftovers | number }}</ion-card-subtitle>
+            <br>
+            <ion-card-subtitle>Обновлено: {{ market.createDate | date:'d MMM, y, HH:mm' }}</ion-card-subtitle>
+        </ion-card-header>
+    </ion-card>
 </ion-content>

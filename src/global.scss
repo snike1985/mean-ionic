@@ -10,3 +10,122 @@
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
 
+
+.custom-table {
+  width: 100%;
+  font-size: 14px;
+  background-color: #fff;
+  text-align: right;
+
+  tr {
+
+    td {
+      padding: 5px;
+
+      &:first-child {
+        font-weight: 800;
+        text-align: left;
+      }
+    }
+  }
+}
+
+.custom-title {
+  display: block;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.data-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    height: 0;
+  }
+}
+
+.info-date {
+  font-size: .8rem;
+  text-align: right;
+  margin-top: 0;
+}
+
+.data-table {
+  min-width: 100%;
+  font-size: 12px;
+  background-color: #fff;
+  text-align: center;
+
+  thead {
+
+    tr {
+
+      th {
+        padding: 5px;
+        background: #003c8c;
+        color: #fff;
+        border-bottom: 1px solid #ccc;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  tbody {
+
+    tr {
+
+      td {
+        padding: 5px;
+        border-bottom: 1px solid #ccc;
+
+        &:first-child {
+          font-weight: 800;
+        }
+      }
+    }
+  }
+
+  tfoot {
+    font-weight: 800;
+  }
+}
+
+.days-list {
+  overflow-x: auto;
+
+  &__wrap {
+    display: flex;
+  }
+}
+
+.scroll-container {
+  overflow-x: auto;
+  padding: 0 16px;
+  margin: 0 -16px;
+
+  &::-webkit-scrollbar {
+    height: 0;
+  }
+
+  ion-segment {
+    justify-content: flex-start;
+
+    ion-segment-button {
+      min-width: 34px;
+
+      ion-label.border-bottom {
+        border-bottom: 1px solid #003c8c;
+      }
+
+      &.segment-button-checked {
+
+        ion-label {
+          border-bottom-color: #fff;
+        }
+      }
+    }
+  }
+}
