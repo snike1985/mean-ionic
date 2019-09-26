@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../services/api.service';
+import {ApiService} from '../../services/api.service';
 
 export interface IContacts {
     _id: string;
@@ -22,11 +22,11 @@ export interface IMarket {
 }
 
 @Component({
-    selector: 'app-tab2',
-    templateUrl: 'tab2.page.html',
-    styleUrls: ['tab2.page.scss']
+    selector: 'app-settings',
+    templateUrl: 'settings.page.html',
+    styleUrls: ['settings.page.scss']
 })
-export class Tab2Page implements OnInit {
+export class SettingsPage implements OnInit {
     public contacts: IContacts[] = [];
     public markets: IMarket[] = [];
 

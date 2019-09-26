@@ -1,0 +1,22 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-title>
+            Файлы
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-list>
+        <ion-item detail="true">
+            <ion-label (click)="openDocument(url + '/files/incomes.xlsx')">Доходы</ion-label>
+        </ion-item>
+        <ion-item detail="true">
+            <ion-label (click)="openDocument(url + '/files/leftovers.xlsx')">Остатки</ion-label>
+        </ion-item>
+        <ion-item detail="true">
+            <ion-label (click)="openDocument(url + '/files/1.xls')">Отчеты</ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>
+

@@ -7,10 +7,14 @@ import {environment} from '../../environments/environment';
 })
 export class ApiService {
 
-    // uri = environment.url;
-    uri = 'http://localhost:8080/api';
+    uri = environment.url;
+    // uri = 'http://localhost:8080/api';
 
     constructor(private http: HttpClient) {
+    }
+
+    login(data) {
+        return this.http.post(`${this.uri}/login`, data);
     }
 
     getContacts() {

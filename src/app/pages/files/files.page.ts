@@ -1,46 +1,28 @@
 import {Component} from '@angular/core';
 import {LoadingController, Platform} from '@ionic/angular';
 
-import * as firebase from 'firebase';
 import {File} from '@ionic-native/file/ngx';
 import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 
-import {MimeService} from '../services/mime.service';
-import {environment} from '../../environments/environment';
+import {MimeService} from '../../services/mime.service';
+import {environment} from '../../../environments/environment';
 
 @Component({
-    selector: 'app-tab3',
-    templateUrl: 'tab3.page.html',
-    styleUrls: ['tab3.page.scss']
+    selector: 'app-files',
+    templateUrl: 'files.page.html',
+    styleUrls: ['files.page.scss']
 })
-export class Tab3Page {
+export class FilesPage {
     public url = environment.url;
     private curMime = '';
 
-    constructor(
-        private mime: MimeService,
-        private file: File,
-        private fileTransfer: FileTransfer,
-        private fileOpener: FileOpener,
-        private platform: Platform,
-        private loadingController: LoadingController
-    ) {
-    }
-
-    public getSomeText(path: string) {
-        // this.presentLoading();
-        //
-        // this.curMime = this.mime.getMIMEtype(path.split('.').pop());
-        //
-        // firebase.storage().ref().child(path).getDownloadURL()
-        //     .then(response => {
-        //         this.openDocument(response);
-        //     })
-        //     .catch(error => {
-        //         console.log('error', error);
-        //         this.dismissLoading();
-        //     });
+    constructor(private mime: MimeService,
+                private file: File,
+                private fileTransfer: FileTransfer,
+                private fileOpener: FileOpener,
+                private platform: Platform,
+                private loadingController: LoadingController) {
     }
 
     async presentLoading() {
@@ -75,7 +57,13 @@ export class Tab3Page {
             .download(doc, path + doc.split('/').pop())
             .then(
                 (entry) => {
-                    const url = entry.toURL();
+                    let url: string;
+
+                    if (this.platform.is('ios')) {
+                        url = entry.toURL();
+                    } else {
+                        url = entry.toInternalURL();
+                    }
 
                     this.dismissLoading();
 

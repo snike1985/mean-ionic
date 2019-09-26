@@ -64,6 +64,7 @@
     tr {
 
       th {
+        height: 40px;
         padding: 5px;
         background: #003c8c;
         color: #fff;
@@ -94,29 +95,54 @@
 }
 
 .days-list {
-  overflow-x: auto;
 
-  &__wrap {
-    display: flex;
+  ion-segment-button {
+    height: 47px;
+    min-width: 46px;
   }
+}
+
+.filter-item {
+  display: block;
+  min-width: 34px;
+  border: {
+    width: 0 5px;
+    style: solid;
+    color: transparent;
+  };
 }
 
 .scroll-container {
   overflow-x: auto;
-  padding: 0 16px;
   margin: 0 -16px;
+  padding: 0 16px;
+  -webkit-overflow-scrolling: touch;
 
   &::-webkit-scrollbar {
     height: 0;
   }
 
+  .after-elem {
+    display: block;
+    min-width: 16px;
+    height: 100%;
+  }
+
   ion-segment {
     justify-content: flex-start;
+    min-width: calc(100% + 16px);
+
+    &:after {
+      display: block;
+      min-width: 16px;
+      content: '';
+    }
 
     ion-segment-button {
-      min-width: 34px;
+      min-width: 46px;
 
       ion-label.border-bottom {
+        display: block;
         border-bottom: 1px solid #003c8c;
       }
 
@@ -126,6 +152,10 @@
           border-bottom-color: #fff;
         }
       }
+    }
+
+    ion-label {
+      padding: 2px 0;
     }
   }
 }

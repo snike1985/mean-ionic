@@ -1,29 +1,48 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-import * as firebase from 'firebase';
-import {environment} from '../environments/environment';
+import {Platform} from '@ionic/angular';
+import {SplashScreen} from '@ionic-native/splash-screen/ngx';
+import {StatusBar} from '@ionic-native/status-bar/ngx';
+import {SecureStorageService} from './services/secure-storage.service';
+import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html'
+    selector: 'app-root',
+    templateUrl: 'app.component.html'
 })
 export class AppComponent {
-  constructor(
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar
-  ) {
-    this.initializeApp();
-    firebase.initializeApp(environment.firebase);
-  }
+    constructor(private platform: Platform,
+                private splashScreen: SplashScreen,
+                private statusBar: StatusBar,
+                private secureStorageService: SecureStorageService,
+                private router: Router) {
+        this.initializeApp();
+    }
 
-  initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
-  }
+    private initializeApp() {
+        this.platform.ready().then(() => {
+            this.statusBar.styleDefault();
+            this.splashScreen.hide();
+            this.getUserToken();
+        });
+    }
+
+    private getUserToken(): void {
+        this.secureStorageService
+            .getTokenFromStorage()
+            .subscribe(
+                (token) => {
+                    if (token) {
+                        console.log('token', token);
+                        this.router.navigate(['/tabs']);
+                    } else {
+                        console.log('need authorize');
+                        this.router.navigate(['/authorization']);
+                    }
+                },
+                () => {
+                    console.log('error get token, need authorize');
+                    this.router.navigate(['/authorization']);
+                });
+    }
 }
