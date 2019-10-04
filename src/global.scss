@@ -48,6 +48,7 @@
 }
 
 .info-date {
+  display: block;
   font-size: .8rem;
   text-align: right;
   margin-top: 0;
@@ -112,6 +113,30 @@
   };
 }
 
+.top-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .info-date {
+    padding-left: 16px;
+    white-space: nowrap;
+
+    @media screen and (max-width: 374px) {
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+.equal-buttons {
+
+  ion-segment-button {
+    width: 50%;
+  }
+}
+
 .scroll-container {
   overflow-x: auto;
   margin: 0 -16px;
@@ -155,7 +180,7 @@
     }
 
     ion-label {
-      padding: 2px 0;
+      padding: 2px 6px;
     }
   }
 }

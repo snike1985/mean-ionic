@@ -12,7 +12,6 @@ import {FileTransfer} from '@ionic-native/file-transfer/ngx';
 import {File} from '@ionic-native/file/ngx';
 import {FileOpener} from '@ionic-native/file-opener/ngx';
 import {MimeService} from './services/mime.service';
-import {ReviewsService} from './services/reviews.service';
 import {ApiService} from './services/api.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {SecureStorage} from '@ionic-native/secure-storage/ngx';
@@ -35,7 +34,6 @@ import {AppInterceptor} from './app.interceptors';
         FileTransfer,
         File,
         FileOpener,
-        ReviewsService,
         ApiService,
         SecureStorage,
         {

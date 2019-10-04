@@ -11,18 +11,92 @@
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
-    <div class="ion-padding">
-        <p *ngIf="currentData" class="info-date">Обновлено: {{ currentData[0].up_date }}</p>
-
+    <div class="ion-padding top-line">
         <ion-segment (ionChange)="changeMarketData()"
                      [(ngModel)]="filterPeriod"
                      mode="ios"
-                     color="primary">
+                     color="primary" class="equal-buttons">
             <ion-segment-button mode="ios" value="day">
                 <ion-label>За День</ion-label>
             </ion-segment-button>
             <ion-segment-button mode="ios" value="month">
                 <ion-label>За Месяц</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+        <span *ngIf="currentData" class="info-date"><span>Обновлено: </span>{{ currentData[0].up_date }}</span>
+    </div>
+
+    <div class="data-table-wrap" *ngIf="viewType === 'main'">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Маркет</th>
+                <th>Факт, руб.</th>
+                <th>Доля</th>
+                <th>вып-е <br> руб.</th>
+                <th>% <br> вып-я</th>
+                <th *ngIf="filterPeriod === 'day'">с пр.
+                    <br>
+                    <span *ngIf="filteredData && filteredData.length">{{ getWeekDay(filteredData[0].day) }}</span>
+                </th>
+                <th *ngIf="filterPeriod === 'month'">с пр. <br> мес</th>
+                <th *ngIf="filteredData; else monthTitle">
+                    с пзпр. <div *ngIf="filteredData.length">
+                    {{ getWeekDay(filteredData[0].day) }}</div>
+                </th>
+                <ng-template #monthTitle>
+                    <th>с пр. <br> годом</th>
+                </ng-template>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of filteredData">
+                <td>{{ item.name }}</td>
+                <td>{{ item.fact | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.dolya | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.vipolnenie | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.percent | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.delta | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.delta_year | percent:'1.0-1':'ru' }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="data-table-wrap" *ngIf="viewType === 'beznal'">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Маркет</th>
+                <th>Факт, руб.</th>
+                <th>Безнал</th>
+                <th>% б/н</th>
+                <th>Возврат</th>
+                <th>% Воз</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of filteredData">
+                <td>{{ item.name }}</td>
+                <td>{{ item.fact | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.beznal | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.per_beznal | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.voz | number:'1.0-0':'ru' }}</td>
+                <td>{{ item.per_voz | percent:'1.0-1':'ru' }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="ion-padding">
+        <ion-segment [(ngModel)]="viewType"
+                     mode="ios"
+                     color="primary" class="equal-buttons">
+            <ion-segment-button mode="ios" value="main">
+                <ion-label>Выполнение</ion-label>
+            </ion-segment-button>
+            <ion-segment-button mode="ios" value="beznal">
+                <ion-label>Безнал</ion-label>
             </ion-segment-button>
         </ion-segment>
         <br>
@@ -68,77 +142,6 @@
                 </ng-container>
             </ion-segment>
         </div>
-    </div>
-
-    <div class="data-table-wrap" *ngIf="viewType === 'main'">
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Маркет</th>
-                <th>Факт, руб.</th>
-                <th>Доля</th>
-                <th>вып-е <br> руб.</th>
-                <th>% <br> вып-я</th>
-                <th *ngIf="filterPeriod === 'day'">с пр.
-                    <br>
-                    <span *ngIf="filteredData && filteredData.length">{{ getWeekDay(filteredData[0].day) }}</span>
-                </th>
-                <th *ngIf="filterPeriod === 'month'">с пр. <br> мес</th>
-                <th>с пр. <br> годом</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of filteredData">
-                <td>{{ item.name }}</td>
-                <td>{{ item.fact | number: '1.0-0':'ru' }}</td>
-                <td>{{ item.dolya | percent:'1.0-1':'ru' }}</td>
-                <td>{{ item.vipolnenie | number: '1.0-0':'ru' }}</td>
-                <td>{{ item.percent | percent:'1.0-1':'ru' }}</td>
-                <td>{{ item.delta | percent:'1.0-1':'ru' }}</td>
-                <td>{{ item.delta_year | percent:'1.0-1':'ru' }}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="data-table-wrap" *ngIf="viewType === 'beznal'">
-        <table class="data-table">
-            <thead>
-            <tr>
-                <th>Маркет</th>
-                <th>Факт, руб.</th>
-                <th>План</th>
-                <th>Безнал</th>
-                <th>% б/н</th>
-                <th>Возврат</th>
-                <th>% Воз</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let item of filteredData">
-                <td>{{ item.name }}</td>
-                <td>{{ item.fact | number: '1.0-0':'ru' }}</td>
-                <td>{{ item.plan | number:'1.0-1':'ru' }}</td>
-                <td>{{ item.beznal | number: '1.0-0':'ru' }}</td>
-                <td>{{ item.per_beznal | percent:'1.0-1':'ru' }}</td>
-                <td>{{ item.voz | number:'1.0-1':'ru' }}</td>
-                <td>{{ item.per_voz | percent:'1.0-1':'ru' }}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="ion-padding">
-        <ion-segment [(ngModel)]="viewType"
-                     mode="ios"
-                     color="primary">
-            <ion-segment-button mode="ios" value="main">
-                <ion-label>Общий</ion-label>
-            </ion-segment-button>
-            <ion-segment-button mode="ios" value="beznal">
-                <ion-label>Безнал</ion-label>
-            </ion-segment-button>
-        </ion-segment>
     </div>
 
 <!--    <ion-card *ngFor="let item of currentData">-->

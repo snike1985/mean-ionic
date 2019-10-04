@@ -7,14 +7,26 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngFor="let market of markets">
-    <ion-card-header>
-      <ion-card-title>{{ market.name }}</ion-card-title>
-      <br>
-      <ion-card-subtitle>Поступления: {{ market.incomes | number }}</ion-card-subtitle>
-      <ion-card-subtitle>Возвраты: {{ market.leftovers | number }}</ion-card-subtitle>
-      <br>
-      <ion-card-subtitle>Обновлено: {{ market.createDate | date:'d MMM, y, HH:mm' }}</ion-card-subtitle>
-    </ion-card-header>
-  </ion-card>
+<!--  <ion-card *ngFor="let market of markets">-->
+<!--    <ion-card-header>-->
+<!--      <ion-card-title>{{ market.name }}</ion-card-title>-->
+<!--      <br>-->
+<!--      <ion-card-subtitle>Поступления: {{ market.incomes | number }}</ion-card-subtitle>-->
+<!--      <ion-card-subtitle>Возвраты: {{ market.leftovers | number }}</ion-card-subtitle>-->
+<!--      <br>-->
+<!--      <ion-card-subtitle>Обновлено: {{ market.createDate | date:'d MMM, y, HH:mm' }}</ion-card-subtitle>-->
+<!--    </ion-card-header>-->
+<!--  </ion-card>-->
+
+<!--  <ion-title>Отделы</ion-title>-->
+<!--  <ion-list>-->
+<!--    <ion-item>-->
+<!--      <ion-label>Все отделы</ion-label>-->
+<!--      <ion-checkbox slot="end" [(ngModel)]="allParts" (ngModelChange)="changeAll()"></ion-checkbox>-->
+<!--    </ion-item>-->
+<!--    <ion-item *ngFor="let item of marletParts">-->
+<!--      <ion-label>{{item.part === 1000 ? 'Доставка' : item.part}}</ion-label>-->
+<!--      <ion-checkbox slot="end" [(ngModel)]="item.isChecked" (ngModelChange)="changePart()"></ion-checkbox>-->
+<!--    </ion-item>-->
+<!--  </ion-list>-->
 </ion-content>

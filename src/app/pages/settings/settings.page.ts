@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../services/api.service';
+import {MARKET_PARTS, MarketService} from '../../services/market.service';
 
 export interface IContacts {
     _id: string;
@@ -21,6 +22,11 @@ export interface IMarket {
     createDate: Date;
 }
 
+export interface IMarketPart {
+    part: number;
+    isChecked: boolean;
+}
+
 @Component({
     selector: 'app-settings',
     templateUrl: 'settings.page.html',
@@ -29,12 +35,31 @@ export interface IMarket {
 export class SettingsPage implements OnInit {
     public contacts: IContacts[] = [];
     public markets: IMarket[] = [];
+    public marletParts: IMarketPart[];
+    public allParts = true;
 
-    constructor(private apiService: ApiService) {
+    constructor(private apiService: ApiService,
+                private marketService: MarketService) {
+        this.marletParts = MARKET_PARTS.map((part) => {
+            const isChecked = true;
+
+            return {part, isChecked};
+        });
     }
 
     ngOnInit() {
         this.getMarkets();
+    }
+
+    public changeAll() {
+        console.log(this.allParts);
+        this.marletParts.forEach((part) => {
+            part.isChecked = this.allParts;
+        });
+    }
+
+    public changePart() {
+        this.marketService.marketPartsArr = this.marletParts.map(({part}) => part);
     }
 
     private getMarkets() {

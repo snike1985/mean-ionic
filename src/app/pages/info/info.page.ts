@@ -3,6 +3,7 @@ import {LoadingController} from '@ionic/angular';
 import {ApiService} from '../../services/api.service';
 import {registerLocaleData} from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
+import {MarketService} from '../../services/market.service';
 
 registerLocaleData(localeRu);
 
@@ -51,7 +52,7 @@ export class InfoPage implements OnInit {
     public isMonth = false;
     public daysArr = [];
     public filterPeriod = 'day'; // can be: "day", "month"
-    public marketPartsArr = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 310, 800, 1000]; // 1000 - dost
+    public marketPartsArr = [];
     public marketParts = 0; // 0 - all
     public currentData: IInfoTable[] = null;
     public filteredData: IInfoTable[] = null;
@@ -62,7 +63,9 @@ export class InfoPage implements OnInit {
     private oldPrefix: string = null;
 
     constructor(private apiService: ApiService,
-                private loadingController: LoadingController) {
+                private loadingController: LoadingController,
+                private marketService: MarketService) {
+        this.marketPartsArr = this.marketService.marketPartsArr;
     }
 
     ngOnInit() {
@@ -174,6 +177,8 @@ export class InfoPage implements OnInit {
                 (data: IMainInfoTable[]) => {
                     this.infoMarkets = data;
                     this.currentData = this.infoMarkets[0].day;
+                    this.marketService.setMarketParts(Object.keys(this.infoMarkets[0]));
+                    this.marketPartsArr = this.marketService.marketPartsArr;
                     this.changeMarketData();
 
                     if (refresh) {
