@@ -6,7 +6,13 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
+  <ion-button expand="block"
+              color="primary"
+              type="submit"
+              (click)="showLogOutAlert()">
+    Выйти
+  </ion-button>
 <!--  <ion-card *ngFor="let market of markets">-->
 <!--    <ion-card-header>-->
 <!--      <ion-card-title>{{ market.name }}</ion-card-title>-->

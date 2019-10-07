@@ -40,8 +40,8 @@
                     <span *ngIf="filteredData && filteredData.length">{{ getWeekDay(filteredData[0].day) }}</span>
                 </th>
                 <th *ngIf="filterPeriod === 'month'">с пр. <br> мес</th>
-                <th *ngIf="filteredData; else monthTitle">
-                    с пзпр. <div *ngIf="filteredData.length">
+                <th *ngIf="filterPeriod !== 'month'; else monthTitle">
+                    с пзпр. <div *ngIf="filteredData?.length">
                     {{ getWeekDay(filteredData[0].day) }}</div>
                 </th>
                 <ng-template #monthTitle>

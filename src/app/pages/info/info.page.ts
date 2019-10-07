@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component} from '@angular/core';
 import {LoadingController} from '@ionic/angular';
 import {ApiService} from '../../services/api.service';
 import {registerLocaleData} from '@angular/common';
@@ -47,7 +47,7 @@ export interface IDay {
     templateUrl: 'info.page.html',
     styleUrls: ['info.page.scss']
 })
-export class InfoPage implements OnInit {
+export class InfoPage implements AfterViewInit {
     public infoMarkets: IMainInfoTable[] = [];
     public isMonth = false;
     public daysArr = [];
@@ -66,9 +66,11 @@ export class InfoPage implements OnInit {
                 private loadingController: LoadingController,
                 private marketService: MarketService) {
         this.marketPartsArr = this.marketService.marketPartsArr;
+        this.marketParts = this.marketPartsArr[0];
+        console.log('this.marketPartsArr', this.marketPartsArr);
     }
 
-    ngOnInit() {
+    ngAfterViewInit() {
         this.getInfoMarkets();
     }
 
@@ -128,6 +130,8 @@ export class InfoPage implements OnInit {
     private updateMarketData(prefix: string) {
         const data = this.infoMarkets[0];
 
+        console.log('this.marketParts', this.marketParts);
+
         if (this.marketParts > 0) {
             if (Number(this.marketParts) === 1000) {
                 this.currentData = data[`dost${prefix}`];
@@ -176,9 +180,11 @@ export class InfoPage implements OnInit {
             .subscribe(
                 (data: IMainInfoTable[]) => {
                     this.infoMarkets = data;
-                    this.currentData = this.infoMarkets[0].day;
                     this.marketService.setMarketParts(Object.keys(this.infoMarkets[0]));
                     this.marketPartsArr = this.marketService.marketPartsArr;
+                    this.currentData = this.infoMarkets[0][this.marketPartsArr[0] + ''];
+                    this.marketParts = this.marketPartsArr[0];
+                    console.log('this.currentData', this.currentData);
                     this.changeMarketData();
 
                     if (refresh) {
@@ -201,6 +207,8 @@ export class InfoPage implements OnInit {
 
     private setDaysArray() {
         const allDaysArr = [];
+
+        console.log('this.currentData', this.currentData);
 
         this.currentData.forEach((item) => {
             if (item.day) {

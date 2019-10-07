@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../services/api.service';
 import {MARKET_PARTS, MarketService} from '../../services/market.service';
+import {AlertController} from '@ionic/angular';
+import {Router} from '@angular/router';
+import {SecureStorageService} from '../../services/secure-storage.service';
 
 export interface IContacts {
     _id: string;
@@ -39,7 +42,10 @@ export class SettingsPage implements OnInit {
     public allParts = true;
 
     constructor(private apiService: ApiService,
-                private marketService: MarketService) {
+                private marketService: MarketService,
+                private router: Router,
+                private secureStorageService: SecureStorageService,
+                private alertController: AlertController) {
         this.marletParts = MARKET_PARTS.map((part) => {
             const isChecked = true;
 
@@ -51,6 +57,25 @@ export class SettingsPage implements OnInit {
         this.getMarkets();
     }
 
+    async showLogOutAlert() {
+        const alert = await this.alertController.create({
+            header: 'Вы действительно хотите выйти?',
+            buttons: [
+                {
+                    text: 'Нет'
+                },
+                {
+                    text: 'Да',
+                    handler: () => {
+                        this.logOut();
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
+    }
+
     public changeAll() {
         console.log(this.allParts);
         this.marletParts.forEach((part) => {
@@ -60,6 +85,11 @@ export class SettingsPage implements OnInit {
 
     public changePart() {
         this.marketService.marketPartsArr = this.marletParts.map(({part}) => part);
+    }
+
+    private logOut(): void {
+        this.secureStorageService.removeItemFromStorage('epic-token');
+        this.router.navigate(['/authorization']);
     }
 
     private getMarkets() {

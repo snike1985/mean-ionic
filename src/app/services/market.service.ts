@@ -55,7 +55,7 @@ export class MarketService {
                 case '800':
                     this.marketPartsArr.push(800);
                     break;
-                case '1000':
+                case 'dost':
                     this.marketPartsArr.push(1000);
                     break;
             }
