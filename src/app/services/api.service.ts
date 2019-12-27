@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
+import {map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -27,5 +28,14 @@ export class ApiService {
 
     getInfoMarkets() {
         return this.http.get(`${this.uri}/infotable`);
+    }
+
+    getFile(filename: string) {
+        return this.http
+            .get(
+                `${this.uri}/infotable/file/${filename}`,
+                {responseType: 'blob' as 'json'}
+            )
+            .pipe(map((res: Blob) => res));
     }
 }

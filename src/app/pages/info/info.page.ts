@@ -1,9 +1,12 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy} from '@angular/core';
 import {LoadingController} from '@ionic/angular';
 import {ApiService} from '../../services/api.service';
 import {registerLocaleData} from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import {MarketService} from '../../services/market.service';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {WebView} from '@ionic-native/ionic-webview/ngx';
+import {Subscription} from 'rxjs';
 
 registerLocaleData(localeRu);
 
@@ -47,7 +50,7 @@ export interface IDay {
     templateUrl: 'info.page.html',
     styleUrls: ['info.page.scss']
 })
-export class InfoPage implements AfterViewInit {
+export class InfoPage implements AfterViewInit, OnDestroy {
     public infoMarkets: IMainInfoTable[] = [];
     public isMonth = false;
     public daysArr = [];
@@ -58,13 +61,18 @@ export class InfoPage implements AfterViewInit {
     public filteredData: IInfoTable[] = null;
     public filterDay = null;
     public viewType = 'main';
+    public isLandscape = false;
+    public imagePath = '';
 
     private loading;
+    private getFileImageRequest: Subscription;
     private oldPrefix: string = null;
 
     constructor(private apiService: ApiService,
                 private loadingController: LoadingController,
-                private marketService: MarketService) {
+                private marketService: MarketService,
+                private screenOrientation: ScreenOrientation,
+                private webview: WebView) {
         this.marketPartsArr = this.marketService.marketPartsArr;
         this.marketParts = this.marketPartsArr[0];
         console.log('this.marketPartsArr', this.marketPartsArr);
@@ -72,6 +80,11 @@ export class InfoPage implements AfterViewInit {
 
     ngAfterViewInit() {
         this.getInfoMarkets();
+        this.screenOrientation.onChange().subscribe(() => this.changeDeviceOrientation());
+    }
+
+    ngOnDestroy() {
+        this.getFileImageRequest.unsubscribe();
     }
 
     public segmentChanged(e) {
@@ -79,7 +92,6 @@ export class InfoPage implements AfterViewInit {
     }
 
     public changeMarketData() {
-
         switch (this.filterPeriod) {
             case 'day':
                 this.updateMarketData('');
@@ -95,11 +107,6 @@ export class InfoPage implements AfterViewInit {
     public doRefresh(event) {
         console.log('Begin async operation');
         this.getInfoMarkets(event.target);
-
-        // setTimeout(() => {
-        //     console.log('Async operation has ended');
-        //     event.target.complete();
-        // }, 2000);
     }
 
     public getWeekDay(curDay: string) {
@@ -125,6 +132,57 @@ export class InfoPage implements AfterViewInit {
 
     async dismissLoading() {
         return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+    }
+
+    async changeDeviceOrientation() {
+        const landscape = 'landscape-secondary';
+
+        console.log('changeDeviceOrientation:', this.screenOrientation.type);
+
+        if (this.screenOrientation.type === landscape) {
+            await this.getImage();
+            this.isLandscape = true;
+        } else {
+            this.getFileImageRequest.unsubscribe();
+            this.isLandscape = false;
+            await this.dismissLoading();
+        }
+    }
+
+    async getImage() {
+        await this.presentLoading();
+
+        console.log('filterDay:', this.filterDay);
+        const filename = `${this.prepareFileName(this.filterDay.toString().trim())}.gif`;
+
+        this.getFileImageRequest = this.apiService.getFile(filename).subscribe(
+            (res) => {
+                this.dismissLoading();
+                const url = window.URL.createObjectURL(res);
+                this.imagePath = this.webview.convertFileSrc(url);
+                // this.imagePath = url;
+            },
+            () => {
+                this.imagePath = '';
+                this.dismissLoading();
+            }
+        );
+    }
+
+    private prepareFileName(name: string): string {
+        return name
+            .replace('янв', 'jan')
+            .replace('фев', 'feb')
+            .replace('мар', 'mar')
+            .replace('апр', 'apr')
+            .replace('май', 'may')
+            .replace('июн', 'jun')
+            .replace('июл', 'jul')
+            .replace('авг', 'aug')
+            .replace('сен', 'sep')
+            .replace('окт', 'oct')
+            .replace('ноя', 'nov')
+            .replace('дек', 'dec');
     }
 
     private updateMarketData(prefix: string) {
@@ -154,6 +212,7 @@ export class InfoPage implements AfterViewInit {
         }
 
         this.updateFilteredDate();
+        // this.getImage();
     }
 
     private updateFilteredDate() {

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ApiService} from '../../services/api.service';
 import {MARKET_PARTS, MarketService} from '../../services/market.service';
 import {AlertController} from '@ionic/angular';
@@ -35,26 +35,42 @@ export interface IMarketPart {
     templateUrl: 'settings.page.html',
     styleUrls: ['settings.page.scss']
 })
-export class SettingsPage implements OnInit {
+export class SettingsPage implements OnInit, AfterViewInit {
     public contacts: IContacts[] = [];
     public markets: IMarket[] = [];
-    public marletParts: IMarketPart[];
+    public marketParts: IMarketPart[];
     public allParts = true;
+
+    private defaultPart: string;
 
     constructor(private apiService: ApiService,
                 private marketService: MarketService,
                 private router: Router,
                 private secureStorageService: SecureStorageService,
                 private alertController: AlertController) {
-        this.marletParts = MARKET_PARTS.map((part) => {
-            const isChecked = true;
-
-            return {part, isChecked};
-        });
     }
 
     ngOnInit() {
-        this.getMarkets();
+        // this.getMarkets();
+        // const defaultPart = this.secureStorageService.defaultPart;
+        //
+        // this.defaultPart = this.secureStorageService.defaultPart ? defaultPart : this.marketService.marketPartsArr[0].toString();
+        // this.marketParts = this.marketService.marketPartsArr.map((part) => {
+        //     const isChecked: boolean = part.toString() === this.defaultPart;
+        //
+        //     return {part, isChecked};
+        // });
+    }
+
+    ngAfterViewInit() {
+        const defaultPart = this.secureStorageService.defaultPart;
+
+        this.defaultPart = this.secureStorageService.defaultPart ? defaultPart : this.marketService.marketPartsArr[0].toString();
+        this.marketParts = this.marketService.marketPartsArr.map((part) => {
+            const isChecked: boolean = part.toString() === this.defaultPart;
+
+            return {part, isChecked};
+        });
     }
 
     async showLogOutAlert() {
@@ -76,15 +92,34 @@ export class SettingsPage implements OnInit {
         await alert.present();
     }
 
-    public changeAll() {
-        console.log(this.allParts);
-        this.marletParts.forEach((part) => {
-            part.isChecked = this.allParts;
-        });
+    public getPartTitle(part: number): string {
+
+        switch (part) {
+            case 1000:
+                return 'Доставка';
+                break;
+            case 0:
+                return 'Все отделы';
+                break;
+            default:
+                return part.toString();
+                break;
+        }
     }
 
-    public changePart() {
-        this.marketService.marketPartsArr = this.marletParts.map(({part}) => part);
+    public changeAll() {
+        console.log(this.allParts);
+        // this.marketParts.forEach((part) => {
+        //     part.isChecked = this.allParts;
+        // });
+    }
+
+    public changePart(e) {
+        console.log(e.detail.value);
+        const newDefaultPart = e.detail.value;
+
+        this.secureStorageService.setDefaultPartToStorage(newDefaultPart);
+        // this.marketService.marketPartsArr = this.marketParts.map(({part}) => part);
     }
 
     private logOut(): void {

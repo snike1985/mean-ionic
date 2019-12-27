@@ -7,6 +7,8 @@ import {FileOpener} from '@ionic-native/file-opener/ngx';
 
 import {MimeService} from '../../services/mime.service';
 import {environment} from '../../../environments/environment';
+import {ApiService} from '../../services/api.service';
+import {WebView} from '@ionic-native/ionic-webview/ngx';
 
 @Component({
     selector: 'app-files',
@@ -17,12 +19,14 @@ export class FilesPage {
     public url = environment.url;
     private curMime = '';
 
-    constructor(private mime: MimeService,
+    constructor(private apiService: ApiService,
+                private mime: MimeService,
                 private file: File,
                 private fileTransfer: FileTransfer,
                 private fileOpener: FileOpener,
                 private platform: Platform,
-                private loadingController: LoadingController) {
+                private loadingController: LoadingController,
+                private webview: WebView) {
     }
 
     async presentLoading() {
@@ -34,7 +38,7 @@ export class FilesPage {
         await this.loadingController.dismiss().then(() => console.log('dismissed'));
     }
 
-    private openDocument(doc: string): void {
+    public openDocument(doc: string): void {
         const transfer = this.fileTransfer.create();
         let path = null;
 

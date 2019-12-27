@@ -16,6 +16,8 @@ import {ApiService} from './services/api.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {SecureStorage} from '@ionic-native/secure-storage/ngx';
 import {AppInterceptor} from './app.interceptors';
+import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
+import {WebView} from '@ionic-native/ionic-webview/ngx';
 
 @NgModule({
     declarations: [AppComponent],
@@ -29,6 +31,8 @@ import {AppInterceptor} from './app.interceptors';
     providers: [
         StatusBar,
         SplashScreen,
+        ScreenOrientation,
+        WebView,
         Platform,
         MimeService,
         FileTransfer,
