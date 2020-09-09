@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnDestroy} from '@angular/core';
-import {LoadingController} from '@ionic/angular';
+import {LoadingController, ModalController} from '@ionic/angular';
 import {ApiService} from '../../services/api.service';
 import {registerLocaleData} from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
@@ -7,6 +7,7 @@ import {MarketService} from '../../services/market.service';
 import {ScreenOrientation} from '@ionic-native/screen-orientation/ngx';
 import {WebView} from '@ionic-native/ionic-webview/ngx';
 import {Subscription} from 'rxjs';
+import {ImageComponent} from '../../modals/image/image.component';
 
 registerLocaleData(localeRu);
 
@@ -72,7 +73,8 @@ export class InfoPage implements AfterViewInit, OnDestroy {
                 private loadingController: LoadingController,
                 private marketService: MarketService,
                 private screenOrientation: ScreenOrientation,
-                private webview: WebView) {
+                private webview: WebView,
+                private modalController: ModalController) {
         this.marketPartsArr = this.marketService.marketPartsArr;
         this.marketParts = this.marketPartsArr[0];
         console.log('this.marketPartsArr', this.marketPartsArr);
@@ -130,22 +132,27 @@ export class InfoPage implements AfterViewInit, OnDestroy {
         await this.loading.present();
     }
 
+    async dismissImageModal() {
+        return await this.modalController.dismiss().then(() => console.log('dismissImageModal'));
+    }
+
     async dismissLoading() {
-        return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+        return await this.loadingController.dismiss().then(() => console.log('dismissLoading'));
     }
 
     async changeDeviceOrientation() {
-        const landscape = 'landscape-secondary';
+        const landscapeSecondary = 'landscape-secondary';
+        // const landscapePrimary = 'landscape-primary';
 
         console.log('changeDeviceOrientation:', this.screenOrientation.type);
 
-        if (this.screenOrientation.type === landscape) {
+        if (this.screenOrientation.type === landscapeSecondary) {
             await this.getImage();
-            this.isLandscape = true;
         } else {
             this.getFileImageRequest.unsubscribe();
             this.isLandscape = false;
             await this.dismissLoading();
+            // await this.dismissImageModal();
         }
     }
 
@@ -160,6 +167,8 @@ export class InfoPage implements AfterViewInit, OnDestroy {
                 this.dismissLoading();
                 const url = window.URL.createObjectURL(res);
                 this.imagePath = this.webview.convertFileSrc(url);
+                this.isLandscape = true;
+                this.presentModal();
                 // this.imagePath = url;
             },
             () => {
@@ -167,6 +176,16 @@ export class InfoPage implements AfterViewInit, OnDestroy {
                 this.dismissLoading();
             }
         );
+    }
+
+    async presentModal() {
+        const modal = await this.modalController.create({
+            component: ImageComponent,
+            componentProps: {
+                imagePath: this.imagePath
+            }
+        });
+        return await modal.present();
     }
 
     private prepareFileName(name: string): string {

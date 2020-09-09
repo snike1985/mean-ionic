@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 
-export const MARKET_PARTS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 310, 800, 1000]; // 1000 - dost
+export const MARKET_PARTS = [0, 10, 11, 20, 30, 40, 50, 60, 70, 80, 90, 100, 310, 800, 1000]; // 1000 - dost
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +21,9 @@ export class MarketService {
                     break;
                 case '10':
                     this.marketPartsArr.push(10);
+                    break;
+                case '11':
+                    this.marketPartsArr.push(11);
                     break;
                 case '20':
                     this.marketPartsArr.push(20);

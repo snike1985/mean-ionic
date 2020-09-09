@@ -11,146 +11,138 @@
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
 
-    <ng-container *ngIf="!isLandscape">
-        <div class="ion-padding top-line">
+    <div class="ion-padding top-line">
+        <ion-segment (ionChange)="changeMarketData()"
+                     [(ngModel)]="filterPeriod"
+                     mode="ios"
+                     color="primary" class="equal-buttons">
+            <ion-segment-button mode="ios" value="day">
+                <ion-label>За День</ion-label>
+            </ion-segment-button>
+            <ion-segment-button mode="ios" value="month">
+                <ion-label>За Месяц</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+        <span *ngIf="currentData" class="info-date"><span>Обновлено: </span>{{ currentData[0].up_date }}</span>
+    </div>
+
+    <div class="data-table-wrap" *ngIf="viewType === 'main'">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Маркет</th>
+                <th>Факт, руб.</th>
+                <th>Доля</th>
+                <th>вып-е <br> руб.</th>
+                <th>% <br> вып-я</th>
+                <th *ngIf="filterPeriod === 'day'">с пр.
+                    <br>
+                    <span *ngIf="filteredData && filteredData.length">{{ getWeekDay(filteredData[0].day) }}</span>
+                </th>
+                <th *ngIf="filterPeriod === 'month'">с пр. <br> мес</th>
+                <th *ngIf="filterPeriod !== 'month'; else monthTitle">
+                    с пзпр. <div *ngIf="filteredData?.length">
+                    {{ getWeekDay(filteredData[0].day) }}</div>
+                </th>
+                <ng-template #monthTitle>
+                    <th>с пр. <br> годом</th>
+                </ng-template>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of filteredData">
+                <td>{{ item.name }}</td>
+                <td>{{ item.fact | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.dolya | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.vipolnenie | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.percent | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.delta | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.delta_year | percent:'1.0-1':'ru' }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="data-table-wrap" *ngIf="viewType === 'beznal'">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Маркет</th>
+                <th>Нал</th>
+                <th>Безнал</th>
+                <th>% б/н</th>
+                <th>Возврат</th>
+                <th>% Воз</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of filteredData">
+                <td>{{ item.name }}</td>
+                <td>{{ item.nal | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.beznal | number: '1.0-0':'ru' }}</td>
+                <td>{{ item.per_beznal | percent:'1.0-1':'ru' }}</td>
+                <td>{{ item.voz | number:'1.0-0':'ru' }}</td>
+                <td>{{ item.per_voz | percent:'1.0-1':'ru' }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="ion-padding">
+        <ion-segment [(ngModel)]="viewType"
+                     mode="ios"
+                     color="primary" class="equal-buttons">
+            <ion-segment-button mode="ios" value="main">
+                <ion-label>Выполнение</ion-label>
+            </ion-segment-button>
+            <ion-segment-button mode="ios" value="beznal">
+                <ion-label>Безнал</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+        <br>
+        <div class="scroll-container">
             <ion-segment (ionChange)="changeMarketData()"
-                         [(ngModel)]="filterPeriod"
+                         [(ngModel)]="marketParts"
                          mode="ios"
-                         color="primary" class="equal-buttons">
-                <ion-segment-button mode="ios" value="day">
-                    <ion-label>За День</ion-label>
-                </ion-segment-button>
-                <ion-segment-button mode="ios" value="month">
-                    <ion-label>За Месяц</ion-label>
-                </ion-segment-button>
-            </ion-segment>
-            <span *ngIf="currentData" class="info-date"><span>Обновлено: </span>{{ currentData[0].up_date }}</span>
-        </div>
-
-        <div class="data-table-wrap" *ngIf="viewType === 'main'">
-            <table class="data-table">
-                <thead>
-                <tr>
-                    <th>Маркет</th>
-                    <th>Факт, руб.</th>
-                    <th>Доля</th>
-                    <th>вып-е <br> руб.</th>
-                    <th>% <br> вып-я</th>
-                    <th *ngIf="filterPeriod === 'day'">с пр.
-                        <br>
-                        <span *ngIf="filteredData && filteredData.length">{{ getWeekDay(filteredData[0].day) }}</span>
-                    </th>
-                    <th *ngIf="filterPeriod === 'month'">с пр. <br> мес</th>
-                    <th *ngIf="filterPeriod !== 'month'; else monthTitle">
-                        с пзпр. <div *ngIf="filteredData?.length">
-                        {{ getWeekDay(filteredData[0].day) }}</div>
-                    </th>
-                    <ng-template #monthTitle>
-                        <th>с пр. <br> годом</th>
+                         color="primary">
+                <ion-segment-button *ngFor="let item of marketPartsArr"
+                                    [value]="item"
+                                    mode="ios">
+                    <ion-label *ngIf="item === 0; else elseMarketPart">Все</ion-label>
+                    <ng-template #elseMarketPart>
+                        <ion-label>{{ getMarketPartName(item) }}</ion-label>
                     </ng-template>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let item of filteredData">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.fact | number: '1.0-0':'ru' }}</td>
-                    <td>{{ item.dolya | percent:'1.0-1':'ru' }}</td>
-                    <td>{{ item.vipolnenie | number: '1.0-0':'ru' }}</td>
-                    <td>{{ item.percent | percent:'1.0-1':'ru' }}</td>
-                    <td>{{ item.delta | percent:'1.0-1':'ru' }}</td>
-                    <td>{{ item.delta_year | percent:'1.0-1':'ru' }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="data-table-wrap" *ngIf="viewType === 'beznal'">
-            <table class="data-table">
-                <thead>
-                <tr>
-                    <th>Маркет</th>
-                    <th>Нал</th>
-                    <th>Безнал</th>
-                    <th>% б/н</th>
-                    <th>Возврат</th>
-                    <th>% Воз</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let item of filteredData">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.nal | number: '1.0-0':'ru' }}</td>
-                    <td>{{ item.beznal | number: '1.0-0':'ru' }}</td>
-                    <td>{{ item.per_beznal | percent:'1.0-1':'ru' }}</td>
-                    <td>{{ item.voz | number:'1.0-0':'ru' }}</td>
-                    <td>{{ item.per_voz | percent:'1.0-1':'ru' }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="ion-padding">
-            <ion-segment [(ngModel)]="viewType"
-                         mode="ios"
-                         color="primary" class="equal-buttons">
-                <ion-segment-button mode="ios" value="main">
-                    <ion-label>Выполнение</ion-label>
-                </ion-segment-button>
-                <ion-segment-button mode="ios" value="beznal">
-                    <ion-label>Безнал</ion-label>
                 </ion-segment-button>
             </ion-segment>
-            <br>
-            <div class="scroll-container">
-                <ion-segment (ionChange)="changeMarketData()"
-                             [(ngModel)]="marketParts"
-                             mode="ios"
-                             color="primary">
-                    <ion-segment-button *ngFor="let item of marketPartsArr"
-                                        [value]="item"
-                                        mode="ios">
-                        <ion-label *ngIf="item === 0; else elseMarketPart">Все</ion-label>
-                        <ng-template #elseMarketPart>
-                            <ion-label>{{ getMarketPartName(item) }}</ion-label>
-                        </ng-template>
+        </div>
+        <br>
+        <div class="scroll-container days-list">
+            <ion-segment (ionChange)="updateFilteredDate()"
+                         [(ngModel)]="filterDay"
+                         mode="ios"
+                         color="primary">
+                <ng-container *ngIf="filterPeriod === 'day'">
+                    <ion-segment-button *ngFor="let day of daysArr"
+                                        mode="ios"
+                                        [value]="day">
+                        <div class="filter-item">
+                            <ion-label class="border-bottom">{{ getWeekDay(day) }}</ion-label>
+                            <ion-label>{{ day }}</ion-label>
+                        </div>
                     </ion-segment-button>
-                </ion-segment>
-            </div>
-            <br>
-            <div class="scroll-container days-list">
-                <ion-segment (ionChange)="updateFilteredDate()"
-                             [(ngModel)]="filterDay"
-                             mode="ios"
-                             color="primary">
-                    <ng-container *ngIf="filterPeriod === 'day'">
-                        <ion-segment-button *ngFor="let day of daysArr"
-                                            mode="ios"
-                                            [value]="day">
-                            <div class="filter-item">
-                                <ion-label class="border-bottom">{{ getWeekDay(day) }}</ion-label>
-                                <ion-label>{{ day }}</ion-label>
-                            </div>
-                        </ion-segment-button>
-                    </ng-container>
-                    <ng-container *ngIf="filterPeriod === 'month'">
-                        <ion-segment-button *ngFor="let day of daysArr"
-                                            mode="ios"
-                                            [value]="day">
-                            <div class="filter-item">
-                                <ion-label>{{ day }}</ion-label>
-                            </div>
-                        </ion-segment-button>
-                    </ng-container>
-                </ion-segment>
-            </div>
+                </ng-container>
+                <ng-container *ngIf="filterPeriod === 'month'">
+                    <ion-segment-button *ngFor="let day of daysArr"
+                                        mode="ios"
+                                        [value]="day">
+                        <div class="filter-item">
+                            <ion-label>{{ day }}</ion-label>
+                        </div>
+                    </ion-segment-button>
+                </ng-container>
+            </ion-segment>
         </div>
-    </ng-container>
-
-    <ng-container *ngIf="isLandscape">
-        <div class="popup" (click)="changeDeviceOrientation('portrait-secondary')">
-            <ion-img [src]="imagePath"></ion-img>
-        </div>
-    </ng-container>
+    </div>
 
 <!--    <ion-card *ngFor="let item of currentData">-->
 <!--        <ion-card-header>-->
