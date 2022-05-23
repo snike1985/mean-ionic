@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  url: 'https://serga-mean-app.herokuapp.com/api',
+  url: 'https://serha-mean-app.herokuapp.com/api',
   firebase: {
     apiKey: 'AIzaSyDRdqtuwNHEiNVm1KD7wyu-_99iBAQSdyY',
     authDomain: 'epic-ionic.firebaseapp.com',
